@@ -1,0 +1,86 @@
+#include <stdio.h>
+
+typedef struct {
+    char nom[50];
+    char code[20];
+    int jourFab, moisFab, anneeFab;
+    int jourPer, moisPer, anneePer;
+    float prixUnitaire;
+    int nbVendus;
+    int nbStock;
+} Medicament;
+
+int comparerDates(int j1, int m1, int a1, int j2, int m2, int a2) {
+    if (a1 != a2) 
+        return a1 - a2;
+    if (m1 != m2) 
+        return m1 - m2;
+    return j1 - j2;
+}
+
+void echanger(Medicament* a, Medicament* b) {
+    Medicament temp = *a;
+    *a = *b;
+    *b = temp;
+}
+
+void saisirMedicaments(Medicament tab[], int n) {
+    for (int i = 0; i < n; i++) {
+        printf("\n--- Medicament %d ---\n", i + 1);
+
+        printf("Date de fabrication (jj mm aaaa) : ");
+        scanf_s("%d %d %d", &tab[i].jourFab, &tab[i].moisFab, &tab[i].anneeFab);
+
+        printf("Date de peremption (jj mm aaaa) : ");
+        scanf_s("%d %d %d", &tab[i].jourPer, &tab[i].moisPer, &tab[i].anneePer);
+
+        printf("Prix unitaire (en euros) : ");
+        scanf_s("%f", &tab[i].prixUnitaire);
+
+        printf("Nombre d unites vendues : ");
+        scanf_s("%d", &tab[i].nbVendus);
+
+        printf("Nombre en stock : ");
+        scanf_s("%d", &tab[i].nbStock);
+    }
+}
+
+void trierParDatePeremption(Medicament tab[], int n) {
+    for (int i = 0; i < n - 1; i++) {
+        for (int j = 0; j < n - i - 1; j++) {
+            if (comparerDates(
+                tab[j].jourPer, tab[j].moisPer, tab[j].anneePer,
+                tab[j + 1].jourPer, tab[j + 1].moisPer, tab[j + 1].anneePer) > 0) {
+                echanger(&tab[j], &tab[j + 1]);
+            }
+        }
+    }
+}
+
+void afficherMedicaments(Medicament tab[], int n) {
+    for (int i = 0; i < n; i++) {
+        printf("\nNom: Medicament_%d | Code: MED%03d | Peremption: %02d/%02d/%04d | Prix: %.2f | Stock: %d\n",
+            i + 1, i + 1,
+            tab[i].jourPer, tab[i].moisPer, tab[i].anneePer,
+            tab[i].prixUnitaire, tab[i].nbStock);
+    }
+}
+
+int main() {
+    int n;
+
+    printf("Entrez le nombre de medicaments (max 80) : ");
+    scanf_s("%d", &n);
+    if (n > 80) 
+       n = 80;
+
+    Medicament tab[80];
+
+    saisirMedicaments(tab, n);
+    trierParDatePeremption(tab, n);
+
+    printf("\n--- Medicaments tries par date de peremption ---\n");
+    afficherMedicaments(tab, n);
+
+    return 0;
+}
