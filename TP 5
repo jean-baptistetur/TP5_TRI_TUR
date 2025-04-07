@@ -7,42 +7,27 @@ typedef struct {
     float moyenne;
 } Etudiant;
 
-void echanger(Etudiant* a, Etudiant* b) {
-    Etudiant temp = *a;
-    *a = *b;
-    *b = temp;
-}
-
-int partition(Etudiant tab[], int bas, int haut) {
-    float pivot = tab[haut].moyenne;
-    int i = bas - 1;
-    for (int j = bas; j < haut; j++) {
-        if (tab[j].moyenne >= pivot) {
-            i++;
-            echanger(&tab[i], &tab[j]);
+void triInsertion(Etudiant tab[], int N) {
+    for (int i = 1; i < N; i++) {
+        Etudiant temp = tab[i];
+        int j = i - 1;
+        while (j >= 0 && strcmp(tab[j].nom, temp.nom) > 0) {
+            tab[j + 1] = tab[j];
+            j--;
         }
-    }
-    echanger(&tab[i + 1], &tab[haut]);
-    return i + 1;
-}
-
-void quicksort(Etudiant tab[], int bas, int haut) {
-    if (bas < haut) {
-        int pivotIndex = partition(tab, bas, haut);
-        quicksort(tab, bas, pivotIndex - 1);
-        quicksort(tab, pivotIndex + 1, haut);
+        tab[j + 1] = temp;
     }
 }
 
 int main() {
     Etudiant etudiants[100];
-    int N = 100;
+    int N = 2;
 
     for (int i = 0; i < N; i++) {
         printf("Etudiant %d\n", i + 1);
         printf("Nom: ");
         scanf_s("%s", etudiants[i].nom, sizeof(etudiants[i].nom));
-        printf("Prénom: ");
+        printf("Prenom: ");
         scanf_s("%s", etudiants[i].prenom, sizeof(etudiants[i].prenom));
         printf("Matricule: ");
         scanf_s("%d", &etudiants[i].matricule);
@@ -50,11 +35,11 @@ int main() {
         scanf_s("%f", &etudiants[i].moyenne);
     }
 
-    quicksort(etudiants, 0, N - 1);
+    triInsertion(etudiants, N);
 
-    printf("\nListe des étudiants triée par moyenne décroissante:\n");
+    printf("\nListe des etudiants triee par nom alphabetique:\n");
     for (int i = 0; i < N; i++) {
-        printf("Nom: %s, Prénom: %s, Matricule: %d, Moyenne: %.2f\n",
+        printf("Nom: %s, Prenom: %s, Matricule: %d, Moyenne: %.2f\n",
             etudiants[i].nom, etudiants[i].prenom, etudiants[i].matricule, etudiants[i].moyenne);
     }
 
