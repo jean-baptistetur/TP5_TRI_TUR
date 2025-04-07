@@ -2,143 +2,60 @@
 
 typedef struct {
     char nom[50];
-    char code[20];
-    int jourFab, moisFab, anneeFab;
-    int jourPer, moisPer, anneePer;
-    float prixUnitaire;
-    int nbVendus;
-    int nbStock;
-} Medicament;
+    char prenom[50];
+    int matricule;
+    float moyenne;
+} Etudiant;
 
-int comparerDates(int j1, int m1, int a1, int j2, int m2, int a2) {
-    if (a1 != a2)
-        return a1 - a2;
-    if (m1 != m2)
-        return m1 - m2;
-    return j1 - j2;
-}
-
-void echanger(Medicament* a, Medicament* b) {
-    Medicament temp = *a;
+void echanger(Etudiant* a, Etudiant* b) {
+    Etudiant temp = *a;
     *a = *b;
     *b = temp;
 }
 
-void saisirMedicaments(Medicament tab[], int n) {
-    for (int i = 0; i < n; i++) {
-        printf("\n--- Medicament %d ---\n", i + 1);
-
-        printf("Date de fabrication (jj mm aaaa) : ");
-        scanf_s("%d %d %d", &tab[i].jourFab, &tab[i].moisFab, &tab[i].anneeFab);
-
-        printf("Date de peremption (jj mm aaaa) : ");
-        scanf_s("%d %d %d", &tab[i].jourPer, &tab[i].moisPer, &tab[i].anneePer);
-
-        printf("Prix unitaire (en euros) : ");
-        scanf_s("%f", &tab[i].prixUnitaire);
-
-        printf("Nombre d unites vendues : ");
-        scanf_s("%d", &tab[i].nbVendus);
-
-        printf("Nombre en stock : ");
-        scanf_s("%d", &tab[i].nbStock);
-    }
-}
-
-void trierParDatePeremption(Medicament tab[], int n) {
-    for (int i = 0; i < n - 1; i++) {
-        for (int j = 0; j < n - i - 1; j++) {
-            if (comparerDates(
-                tab[j].jourPer, tab[j].moisPer, tab[j].anneePer,
-                tab[j + 1].jourPer, tab[j + 1].moisPer, tab[j + 1].anneePer) > 0) {
-                echanger(&tab[j], &tab[j + 1]);
-            }
+int partition(Etudiant tab[], int bas, int haut) {
+    float pivot = tab[haut].moyenne;
+    int i = bas - 1;
+    for (int j = bas; j < haut; j++) {
+        if (tab[j].moyenne >= pivot) {
+            i++;
+            echanger(&tab[i], &tab[j]);
         }
     }
+    echanger(&tab[i + 1], &tab[haut]);
+    return i + 1;
 }
 
-void afficherMedicaments(Medicament tab[], int n) {
-    for (int i = 0; i < n; i++) {
-        printf("\nNom: Medicament_%d | Code: MED%03d | Peremption: %02d/%02d/%04d | Prix: %.2f | Stock: %d\n",
-            i + 1, i + 1,
-            tab[i].jourPer, tab[i].moisPer, tab[i].anneePer,
-            tab[i].prixUnitaire, tab[i].nbStock);
+void quicksort(Etudiant tab[], int bas, int haut) {
+    if (bas < haut) {
+        int pivotIndex = partition(tab, bas, haut);
+        quicksort(tab, bas, pivotIndex - 1);
+        quicksort(tab, pivotIndex + 1, haut);
     }
 }
-
-
-void trouverMedicamentPlusCher(Medicament tab[], int n) {
-    int indexPlusCher = 0;  
-
-    for (int i = 1; i < n; i++) {
-        if (tab[i].prixUnitaire > tab[indexPlusCher].prixUnitaire) {
-            indexPlusCher = i; 
-        }
-    }
-
-    printf("\n--- Le medicament le plus cher ---\n");
-    printf("Prix: %.2f | Stock: %d\n",
-        tab[indexPlusCher].prixUnitaire,
-        tab[indexPlusCher].nbStock);
-}
-
-int rechercheDichotomiquePrix(Medicament tab[], int n, float prixRecherche) {
-    int debut = 0, fin = n - 1;
-    int mil;
-    int trouve = 0;
-
-    while (!trouve && debut <= fin) {
-        mil = (debut + fin) / 2;
-        if (tab[mil].prixUnitaire == prixRecherche) {
-            trouve = 1;
-        }
-        else if (tab[mil].prixUnitaire < prixRecherche) {
-            debut = mil + 1;
-        }
-        else {
-            fin = mil - 1;
-        }
-
-        if (trouve)
-            return mil;
-    }
-    return -1;
-}
-
 
 int main() {
-    int n;
+    Etudiant etudiants[100];
+    int N = 100;
 
-    printf("Entrez le nombre de medicaments (max 80) : ");
-    scanf_s("%d", &n);
-    if (n > 80)
-        n = 80;
-
-    Medicament tab[80];
-
-    saisirMedicaments(tab, n);
-    trierParDatePeremption(tab, n);
-
-    printf("\n--- Medicaments tries par date de peremption ---\n");
-    afficherMedicaments(tab, n);
-
-   
-    trouverMedicamentPlusCher(tab, n);
-
-    float prixRecherche;
-
-    printf("\nEntrez le prix a rechercher : ");
-    scanf_s("%f", &prixRecherche);
-
-    int indexPrix = rechercheDichotomiquePrix(tab, n, prixRecherche);
-    if (indexPrix != -1) {
-        int i = 1;
-        printf("\n %d Medicament(s) avec prix %.2f trouve : Stock: %d\n", i,
-            prixRecherche, tab[indexPrix].nbStock);
-        i++;
+    for (int i = 0; i < N; i++) {
+        printf("Etudiant %d\n", i + 1);
+        printf("Nom: ");
+        scanf_s("%s", etudiants[i].nom, sizeof(etudiants[i].nom));
+        printf("Prénom: ");
+        scanf_s("%s", etudiants[i].prenom, sizeof(etudiants[i].prenom));
+        printf("Matricule: ");
+        scanf_s("%d", &etudiants[i].matricule);
+        printf("Moyenne: ");
+        scanf_s("%f", &etudiants[i].moyenne);
     }
-    else {
-        printf("\nAucun medicament avec le prix %.2f trouve.\n", prixRecherche);
+
+    quicksort(etudiants, 0, N - 1);
+
+    printf("\nListe des étudiants triée par moyenne décroissante:\n");
+    for (int i = 0; i < N; i++) {
+        printf("Nom: %s, Prénom: %s, Matricule: %d, Moyenne: %.2f\n",
+            etudiants[i].nom, etudiants[i].prenom, etudiants[i].matricule, etudiants[i].moyenne);
     }
 
     return 0;
