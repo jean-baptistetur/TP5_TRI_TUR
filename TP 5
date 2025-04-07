@@ -65,7 +65,7 @@ void afficherMedicaments(Medicament tab[], int n) {
             tab[i].prixUnitaire, tab[i].nbStock);
     }
 }
-int rechercheDichotomiquePrix(Medicament tab[], int n, float prixRecherche) {
+int rechercheDichotomiquePrix(Medicament tab[], int n, float prixRecherche) { // j'ai fait avec le prix car j'y arrivais pas avec le nom
     int debut = 0, fin = n - 1;
     int mil;
     int trouve = 0;
